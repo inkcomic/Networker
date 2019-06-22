@@ -38,7 +38,7 @@ namespace Tutorial.Server
  
 			while (server.Information.IsRunning)
 			{
-				gameClient.Client.Send(new ChatPacket
+				gameClient.Client.SendUdp(new ChatPacket
 				{
 					Message = DateTime.Now.ToString()
 				});

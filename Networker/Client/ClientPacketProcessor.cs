@@ -17,7 +17,7 @@ namespace Networker.Client
         private readonly IPacketHandlers packetHandlers;
         private readonly IPacketSerialiser packetSerialiser;
         private readonly ObjectPool<ISender> tcpSenderObjectPool;
-        private readonly ObjectPool<ISender> udpSenderObjectPool;
+        private /*readonly*/ ObjectPool<ISender> udpSenderObjectPool;
 
         private IUdpSocketSender _udpSocketSender;
         private ObjectPool<IPacketContext> _packetContextObjectPool;
@@ -37,10 +37,11 @@ namespace Networker.Client
             for (var i = 0; i < tcpSenderObjectPool.Capacity; i++)
                 tcpSenderObjectPool.Push(new TcpSender(packetSerialiser));
 
-            udpSenderObjectPool = new ObjectPool<ISender>(options.ObjectPoolSize);
-
-            for (var i = 0; i < udpSenderObjectPool.Capacity; i++)
-                udpSenderObjectPool.Push(new UdpSender(_udpSocketSender));
+            //move to set SetUdpSocketSender
+            //             udpSenderObjectPool = new ObjectPool<ISender>(options.ObjectPoolSize);
+            // 
+            //             for (var i = 0; i < udpSenderObjectPool.Capacity; i++)
+            //                 udpSenderObjectPool.Push(new UdpSender(_udpSocketSender));
 
             _packetContextObjectPool = new ObjectPool<IPacketContext>(options.ObjectPoolSize * 2);
 
@@ -106,6 +107,12 @@ namespace Networker.Client
         public void SetUdpSocketSender(IUdpSocketSender socketSender)
         {
             _udpSocketSender = socketSender;
+
+
+            udpSenderObjectPool = new ObjectPool<ISender>(options.ObjectPoolSize);
+
+            for (var i = 0; i < udpSenderObjectPool.Capacity; i++)
+                udpSenderObjectPool.Push(new UdpSender(_udpSocketSender));
         }
 
         private void Process(byte[] buffer, ISender sender)

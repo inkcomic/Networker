@@ -21,6 +21,9 @@ namespace Tutorial.Client
 		public override async Task Process(ChatPacket packet, IPacketContext packetContext)
 		{
 			_logger.LogDebug("Client received the response packet: " + packet.Message);
-		}
+
+            packetContext.Sender.Send(packet);
+
+        }
 	}
 }

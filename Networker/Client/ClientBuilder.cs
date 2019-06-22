@@ -15,7 +15,10 @@ namespace Networker.Client
 			serviceCollection.AddSingleton<IUdpSocketSender, UdpClientSender>();
 
 			var serviceProvider = GetServiceProvider();
-			return serviceProvider.GetService<IClient>();
+
+            serviceProvider.GetService<IClientPacketProcessor>().SetUdpSocketSender(serviceProvider.GetService<IUdpSocketSender>());
+
+            return serviceProvider.GetService<IClient>();
 		}
 
 		public T Build<T>()
@@ -27,7 +30,11 @@ namespace Networker.Client
 			serviceCollection.AddSingleton<IUdpSocketSender, UdpClientSender>();
 
 			var serviceProvider = GetServiceProvider();
-			return serviceProvider.GetService<T>();
+
+            serviceProvider.GetService<IClientPacketProcessor>().SetUdpSocketSender(serviceProvider.GetService<IUdpSocketSender>());
+
+
+            return serviceProvider.GetService<T>();
 		}
 
 		public IClientBuilder SetPacketBufferPoolSize(int size)
